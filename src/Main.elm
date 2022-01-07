@@ -278,7 +278,7 @@ viewPageComposition page =
     Element.layout [ spaceEvenly, Element.inFront viewTopNavigation, Element.width Element.fill ] <|
         Element.column [ padding 20 ]
             [ viewNavigationOffSet
-            , Element.row [ padding 10, spacing 20]
+            , Element.row [ padding 10, spacing 20 ]
                 (viewCommonToAll page)
             ]
 
@@ -302,7 +302,7 @@ viewBookPageCommentary page =
     Element.layout [ spaceEvenly, Element.inFront viewTopNavigation, Element.width Element.fill ] <|
         Element.column [ padding 20 ]
             [ viewNavigationOffSet
-            , Element.row [ padding 10, spacing 20]
+            , Element.row [ padding 10, spacing 20 ]
                 [ viewAllBooks page.allBooks
                 , Element.textColumn [ spacing 5 ]
                     [ Element.text
@@ -336,18 +336,20 @@ viewCommentaryLine title chapter listLine arrayCommentary commentaryNumber =
     in
     case res of
         Just line ->
-            Element.row []
+            Element.row [Element.onRight (viewCommentary commentaryNumber arrayCommentary listLine)]
                 [ Element.el [ alignLeft, width (px 50) ] (Element.text (String.fromInt line.lineNumber))
-                , Element.el [
-                       padding 15
-                      , onClick (FetchBookPageCommentary title chapter line.lineNumber)
-                      ,Element.onRight (viewCommentary commentaryNumber arrayCommentary listLine)
-                      ] (Element.text line.text)
+                , Element.el
+                    [ padding 15
+                    , onClick (FetchBookPageCommentary title chapter line.lineNumber)
+                    ]
+                    (Element.text line.text)
                 ]
 
         Nothing ->
             Element.none
-viewCommentary : CommentaryNumber -> Array Commentary ->List Line -> Element.Element Msg
+
+
+viewCommentary : CommentaryNumber -> Array Commentary -> List Line -> Element.Element Msg
 viewCommentary commentaryNumber arrayCommentary line =
     let
         res =
@@ -355,20 +357,21 @@ viewCommentary commentaryNumber arrayCommentary line =
     in
     case res of
         Just commentary ->
-            Element.paragraph [ Element.paddingEach commentaryPadding, spacing 5, Element.above (viewWordAnalysis (List.head line)) ]
+            Element.paragraph [ Element.paddingEach commentaryPadding, spacing 5, Element.above (viewWordAnalysis (List.head line)), Border.widthEach commentaryBorder ]
                 [ Element.el [] (Element.text commentary.text)
                 , Element.el [] (Element.text commentary.source)
                 , Element.el [] (Element.text commentary.commentaryAuthorId)
                 ]
 
         Nothing ->
-            Element.el [Element.onRight (viewWordAnalysis (List.head line))] Element.none
+            Element.el [ Element.onRight (viewWordAnalysis (List.head line)),Element.width Element.fill  ] Element.none
+
 
 viewWordAnalysis : Maybe Line -> Element.Element Msg
 viewWordAnalysis maybe =
     case maybe of
         Just line ->
-            Element.column [Element.paddingEach commentaryPadding] (List.map viewWord (String.split " " line.text))
+            Element.column [ alignRight, Border.widthEach commentaryBorder ] (List.map viewWord (String.split " " line.text))
 
         Nothing ->
             Element.text "Error: No text could be found"
@@ -417,11 +420,7 @@ viewAllLines title chapter zipListLine =
             ]
         )
 
-
-navigationOffSet =
-    { top = 25, bottom = 0, right = 0, left = 0 }
-
-
+-- this offsets the page for the navbar, so it doesnt cover text.
 viewNavigationOffSet =
     Element.el [ Element.width Element.fill, Region.navigation, alignTop, Element.paddingEach navigationOffSet, spacing 20 ] Element.none
 
@@ -439,13 +438,18 @@ navBorders =
     , right = 0
     , top = 0
     }
+
+
+navigationOffSet =
+    { top = 25, bottom = 0, right = 0, left = 0 }
+
+
 commentaryPadding =
-    { bottom =10
+    { bottom = 10
     , left = 150
     , right = 0
     , top = 0
     }
-
 
 navColorWhite =
     Element.fromRgb255
