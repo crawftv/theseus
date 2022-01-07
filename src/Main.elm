@@ -419,13 +419,13 @@ viewAllLines title chapter zipListLine =
         )
 
 -- this offsets the page for the navbar, so it doesnt cover text.
-viewNavigationOffSet =
-    Element.el [ Element.width Element.fill, Region.navigation, alignTop, Element.paddingEach navigationOffSet, spacing 20 ] Element.none
+-- viewNavigationOffSet =Element.el [ Element.width Element.fill, Region.navigation, alignTop, Element.paddingEach navigationOffSet, spacing 20 ] Element.none
+viewNavigationOffSet = Element.none
 
 
 viewTopNavigation =
-    Element.row [ Background.color navColorWhite, Element.width Element.fill, Region.navigation, Border.widthEach navBorders, alignTop, padding 10, Element.height (Element.px 25) ]
-        [ Element.el [ alignLeft ] (Element.text "Logo")
+    Element.row [ Background.color navColorWhite, Element.width Element.fill, Region.navigation, Border.widthEach navBorders, Element.paddingXY 10 0, Element.height (Element.maximum 25  (Element.fill )) ]
+        [ Element.el [ ] (Element.text "Logo")
         , Element.el [ alignRight ] (Element.text "Settings")
         ]
 
