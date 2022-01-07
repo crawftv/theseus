@@ -139,5 +139,5 @@ main :: IO ()
 main = do
   -- you could read this from some configuration file,
   -- environment variable or somewhere else instead.
-  let dbfile = "../db.sqlite3"
+  let dbfile = "db.sqlite3"
   runApp dbfile

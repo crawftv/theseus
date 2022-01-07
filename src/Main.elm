@@ -1,6 +1,6 @@
 module Main exposing (main)
 
-import Array
+import Array exposing (Array)
 import Browser
 import Dict
 import Element exposing (alignLeft, alignRight, alignTop, padding, px, spaceEvenly, spacing, width)
@@ -10,7 +10,7 @@ import Element.Events as Events exposing (onClick)
 import Element.Region as Region
 import Html
 import Http
-import Json.Decode as Decode exposing (Decoder, int, list, string, oneOf)
+import Json.Decode as Decode exposing (Decoder, array, int, list, oneOf, string)
 import Json.Decode.Pipeline exposing (custom, hardcoded, required)
 import RemoteData exposing (RemoteData(..), WebData)
 import RemoteData.Http
@@ -22,42 +22,82 @@ type Model
     | BookPageCommentary_ (WebData BookPageCommentary)
 
 
-type alias ZipListLine = { p1 : List Line, p2 : List Line, p3 : List Line}
+type alias Title =
+    String
+
+
+type alias Text =
+    String
+
+
+type alias Chapter =
+    Int
+
+
+type alias LineNumber =
+    Int
+
+
+type alias BookId =
+    Int
+
+
+type alias NumberOfChapters =
+    Int
+
+
+type alias CommentaryAuthorId =
+    String
+
+
+type alias CommentaryNumber =
+    Int
+
+
+type alias Source =
+    String
+
+
+type alias ZipListLine =
+    { p1 : List Line, p2 : List Line, p3 : List Line }
+
+
 type alias BookPage =
-    { title : String
+    { title : Title
     , linesOfText : ZipListLine
-    , chapter : Int
+    , chapter : Chapter
     , allBooks : List Book
     }
 
 
 type alias BookPageCommentary =
-    { title : String
+    { title : Title
     , linesOfText : ZipListLine
-    , chapter : Int
+    , chapter : Chapter
     , allBooks : List Book
-    , commentary : List Commentary
-    , lineNumber : Int
+    , commentary : Array Commentary
+    , lineNumber : LineNumber
+    , commentaryNumber : CommentaryNumber
     }
 
 
 type alias Commentary =
-    { text : String
-    , commentaryAuthorId : String
-    , source : String
+    { text : Text
+    , commentaryAuthorId : CommentaryAuthorId
+    , source : Source
     }
 
 
 type alias Book =
-    { bookTitle : String
-    , bookId : Int
-    , numberOfChapters : Int
+    { bookTitle : Title
+    , bookId : BookId
+    , numberOfChapters : NumberOfChapters
     }
 
 
 type alias Line =
-    { text : String
-    , lineNumber : Int
+    { text : Text
+    , lineNumber : LineNumber
     }
 
 
@@ -87,8 +127,10 @@ bookPageCommentaryDecoder =
         |> required "bpcLinesOfText" zipListLineDecoder
         |> required "bpcChapter" int
         |> required "bpcAllBooks" (list bookDecoder)
-        |> required "bpcCommentary" (list commentaryDecoder)
+        |> required "bpcCommentary" (array commentaryDecoder)
         |> required "bpcLineNumber" int
+        |> hardcoded 0
+
 
 zipListLineDecoder : Decoder ZipListLine
 zipListLineDecoder =
@@ -96,6 +138,7 @@ zipListLineDecoder =
         |> required "p1" (list lineDecoder)
         |> required "p2" (list lineDecoder)
         |> required "p3" (list lineDecoder)
+
 
 commentaryDecoder : Decoder Commentary
 commentaryDecoder =
@@ -192,14 +235,14 @@ view model =
                     , body = [ Element.layout [] (Element.text "Loading") ]
                     }
 
-                Success bookPage ->
+                Success page ->
                     { title =
                         String.join " "
-                            [ bookPage.title
-                            , String.append "Chapter " (String.fromInt bookPage.chapter)
+                            [ page.title
+                            , String.append "Chapter " (String.fromInt page.chapter)
                             ]
                     , body =
-                        [ viewPageComposition bookPage ]
+                        [ viewPageComposition page ]
                     }
 
         BookPageCommentary_ data ->
@@ -224,44 +267,116 @@ view model =
                             , String.append "Chapter " (String.fromInt page.chapter)
                             ]
                     , body =
-                        [ viewPageComposition page
+                        [ viewBookPageCommentary page
+
+                        --Element.layout [] (Element.text (Debug.toString page))
                         ]
                     }
 
-viewPageComposition page =  Element.layout [ spaceEvenly, Element.inFront viewTopNavigation , Element.width Element.fill] <|
-                            Element.column [ padding 20 ]
-                                [viewNavigationOffSet,
-                                 Element.row [ padding 10, spacing 20, Element.explain Debug.todo ]
-                                    ([ viewAllBooks page.allBooks
-                                    , Element.textColumn [ spacing 5  ]
-                                        [ Element.text
-                                            (String.join " "
-                                                [ page.title
-                                                , String.append "Chapter " (String.fromInt page.chapter)
-                                                ]
-                                            )
-                                        , viewAllLines page.title page.chapter page.linesOfText page.commentary
-                                        ]
-                                    ] )
-                                ]
 
-viewBookPageCommentary bookPageCommentary = [Element.column [ spacing 5, alignTop ]
-                                        [ Element.el [Region.heading 1] (Element.text "Word Analysis")
-                                        , viewWordAnalysis (Array.get (bookPageCommentary.lineNumber-1)  (Array.fromList bookPageCommentary.linesOfText))
-                                        , Element.el [ Region.heading 1 ] (Element.text "Commentary")
-                                        , Element.column [] (List.map viewCommentary bookPageCommentary.commentary)
-                                        ]]
+viewPageComposition page =
+    Element.layout [ spaceEvenly, Element.inFront viewTopNavigation, Element.width Element.fill ] <|
+        Element.column [ padding 20 ]
+            [ viewNavigationOffSet
+            , Element.row [ padding 10, spacing 20]
+                (viewCommonToAll page)
+            ]
+
+
+viewCommonToAll page =
+    [ viewAllBooks page.allBooks
+    , Element.textColumn [ spacing 5 ]
+        [ Element.text
+            (String.join " "
+                [ page.title
+                , String.append "Chapter " (String.fromInt page.chapter)
+                ]
+            )
+        , viewAllLines page.title page.chapter page.linesOfText
+        ]
+    ]
+
+
+viewBookPageCommentary : BookPageCommentary -> Html.Html Msg
+viewBookPageCommentary page =
+    Element.layout [ spaceEvenly, Element.inFront viewTopNavigation, Element.width Element.fill ] <|
+        Element.column [ padding 20 ]
+            [ viewNavigationOffSet
+            , Element.row [ padding 10, spacing 20]
+                [ viewAllBooks page.allBooks
+                , Element.textColumn [ spacing 5 ]
+                    [ Element.text
+                        (String.join " "
+                            [ page.title
+                            , String.append "Chapter " (String.fromInt page.chapter)
+                            ]
+                        )
+                    , viewAllLinesCommentary page.title page.chapter page.linesOfText page.commentary page.commentaryNumber
+                    ]
+                ]
+            ]
+
+
+viewAllLinesCommentary : Title -> Chapter -> ZipListLine -> Array Commentary -> CommentaryNumber -> Element.Element Msg
+viewAllLinesCommentary title chapter zipListLine commentary commentaryNumber =
+    Element.textColumn []
+        (List.concat
+            [ List.map (viewLine title chapter) zipListLine.p1
+            , [ viewCommentaryLine title chapter zipListLine.p2 commentary commentaryNumber ]
+            , List.map (viewLine title chapter) zipListLine.p3
+            ]
+        )
+
+
+viewCommentaryLine : Title -> Chapter -> List Line -> Array Commentary -> CommentaryNumber -> Element.Element Msg
+viewCommentaryLine title chapter listLine arrayCommentary commentaryNumber =
+    let
+        res =
+            List.head listLine
+    in
+    case res of
+        Just line ->
+            Element.row []
+                [ Element.el [ alignLeft, width (px 50) ] (Element.text (String.fromInt line.lineNumber))
+                , Element.el [
+                       padding 15
+                      , onClick (FetchBookPageCommentary title chapter line.lineNumber)
+                      ,Element.onRight (viewCommentary commentaryNumber arrayCommentary listLine)
+                      ] (Element.text line.text)
+                ]
+
+        Nothing ->
+            Element.none
+viewCommentary : CommentaryNumber -> Array Commentary ->List Line -> Element.Element Msg
+viewCommentary commentaryNumber arrayCommentary line =
+    let
+        res =
+            Array.get commentaryNumber arrayCommentary
+    in
+    case res of
+        Just commentary ->
+            Element.paragraph [ Element.paddingEach commentaryPadding, spacing 5, Element.above (viewWordAnalysis (List.head line)) ]
+                [ Element.el [] (Element.text commentary.text)
+                , Element.el [] (Element.text commentary.source)
+                , Element.el [] (Element.text commentary.commentaryAuthorId)
+                ]
+
+        Nothing ->
+            Element.el [Element.onRight (viewWordAnalysis (List.head line))] Element.none
 
 viewWordAnalysis : Maybe Line -> Element.Element Msg
 viewWordAnalysis maybe =
     case maybe of
         Just line ->
-            Element.column [] (List.map viewWord (String.split " " (line.text)) )
+            Element.column [Element.paddingEach commentaryPadding] (List.map viewWord (String.split " " line.text))
+
         Nothing ->
             Element.text "Error: No text could be found"
 
+
 viewWord word =
     Element.el [] (Element.text word)
+
 
 viewHomePage_ =
     Element.text "Home Page"
@@ -278,12 +393,13 @@ viewBook book =
         , Element.wrappedRow [] (List.map (viewChapter book) (List.range 1 book.numberOfChapters))
         ]
 
-viewChapter : Book -> Int -> Element.Element Msg
+
+viewChapter : Book -> Chapter -> Element.Element Msg
 viewChapter book chapter =
     Element.el [ padding 2, onClick (FetchBookPage book.bookTitle chapter) ] (Element.text (String.fromInt chapter))
 
 
-viewLine : String -> Int -> Line -> Element.Element Msg
+viewLine : String -> Chapter -> Line -> Element.Element Msg
 viewLine title chapter line =
     Element.row []
         [ Element.el [ alignLeft, width (px 50) ] (Element.text (String.fromInt line.lineNumber))
@@ -291,34 +407,27 @@ viewLine title chapter line =
         ]
 
 
+viewAllLines : Title -> Chapter -> ZipListLine -> Element.Element Msg
+viewAllLines title chapter zipListLine =
+    Element.textColumn []
+        (List.concat
+            [ List.map (viewLine title chapter) zipListLine.p1
+            , List.map (viewLine title chapter) zipListLine.p2
+            , List.map (viewLine title chapter) zipListLine.p3
+            ]
+        )
 
-viewCommentaryLine : String -> Int ->List Line -> Commentary -> Element.Element Msg
-viewCommentaryLine title chapter listLine commentary =
-    let res = List.head listLine
-    in
-        case res of
-            Just line ->
-                Element.row []
-                    [ Element.el [ alignLeft, width (px 50), Element.onRight (viewCommentary commentary )] (Element.text (String.fromInt line.lineNumber))
-                    , Element.el [ padding 15, onClick (FetchBookPageCommentary title chapter line.lineNumber) ] (Element.text line.text)
-                    ]
-            Nothing ->
-                Element.none
 
-viewAllLines : String -> Int -> ZipListLine -> Commentary -> Element.Element Msg
-viewAllLines title chapter zipListLine commentary=
-    Element.textColumn [] (List.concat [
-         (List.map (viewLine title chapter) zipListLine.p1)
-        , [viewCommentaryLine title chapter zipListLine.p2 commentary]
-        , (List.map (viewLine title chapter) zipListLine.p3)
-        ])
+navigationOffSet =
+    { top = 25, bottom = 0, right = 0, left = 0 }
 
-navigationOffSet = {top=25,bottom=0,right=0,left=0}
-viewNavigationOffSet=
-         Element.el [ Element.width Element.fill, Region.navigation, alignTop, Element.paddingEach navigationOffSet,spacing 20] Element.none
-       
+
+viewNavigationOffSet =
+    Element.el [ Element.width Element.fill, Region.navigation, alignTop, Element.paddingEach navigationOffSet, spacing 20 ] Element.none
+
+
 viewTopNavigation =
-    Element.row [ Background.color navColorWhite, Element.width Element.fill, Region.navigation, Border.widthEach navBorders, alignTop, padding 10 , Element.height (Element.px 25) ]
+    Element.row [ Background.color navColorWhite, Element.width Element.fill, Region.navigation, Border.widthEach navBorders, alignTop, padding 10, Element.height (Element.px 25) ]
         [ Element.el [ alignLeft ] (Element.text "Logo")
         , Element.el [ alignRight ] (Element.text "Settings")
         ]
@@ -330,21 +439,21 @@ navBorders =
     , right = 0
     , top = 0
     }
-navColorWhite = Element.fromRgb255 {
-    red = 255,
-    green= 255,
-    blue= 255,
-    alpha= 255
-                }
+commentaryPadding =
+    { bottom =10
+    , left = 150
+    , right = 0
+    , top = 0
+    }
 
-viewCommentary : Commentary -> Element.Element Msg
-viewCommentary commentary =
-    Element.paragraph [ padding 5, spacing 5 ]
-        [ Element.el [] (Element.text commentary.text)
-        , Element.el [] (Element.text commentary.source)
-        , Element.el [] (Element.text commentary.commentaryAuthorId)
-        ]
 
+navColorWhite =
+    Element.fromRgb255
+        { red = 255
+        , green = 255
+        , blue = 255
+        , alpha = 255
+        }
 
 
 main =
@@ -356,11 +465,11 @@ main =
         }
 
 
-fetchBookPageCmd : String -> Int -> Cmd Msg
+fetchBookPageCmd : Title -> Chapter -> Cmd Msg
 fetchBookPageCmd title chapter =
     RemoteData.Http.getWithConfig RemoteData.Http.defaultConfig (crossOrigin "http://localhost:8080/books" [ title, String.fromInt chapter ] []) HandleBookPageResponse bookPageDecoder
 
 
-fetchBookPageCommentaryCmd : String -> Int -> Int -> Cmd Msg
+fetchBookPageCommentaryCmd : Title -> Chapter -> LineNumber -> Cmd Msg
 fetchBookPageCommentaryCmd title chapter lineNumber =
     RemoteData.Http.getWithConfig RemoteData.Http.defaultConfig (crossOrigin "http://localhost:8080/books" [ title, String.fromInt chapter, String.fromInt lineNumber ] []) HandleBookPageCommentaryResponse bookPageCommentaryDecoder
