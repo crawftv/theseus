@@ -268,8 +268,6 @@ view model =
                             ]
                     , body =
                         [ viewBookPageCommentary page
-
-                        --Element.layout [] (Element.text (Debug.toString page))
                         ]
                     }
 
@@ -357,10 +355,10 @@ viewCommentary commentaryNumber arrayCommentary line =
     in
     case res of
         Just commentary ->
-            Element.paragraph [ Element.paddingEach commentaryPadding, spacing 5, Element.above (viewWordAnalysis (List.head line)), Border.widthEach commentaryBorder ]
-                [ Element.el [] (Element.text commentary.text)
-                , Element.el [] (Element.text commentary.source)
-                , Element.el [] (Element.text commentary.commentaryAuthorId)
+            Element.textColumn [ Element.paddingEach commentaryPadding, spacing 5, Element.above (viewWordAnalysis (List.head line)),  Border.width 2 ]
+                [ viewCommentaryElement commentary.text
+                , viewCommentaryElement commentary.source
+                , viewCommentaryElement commentary.commentaryAuthorId
                 ]
 
         Nothing ->
@@ -371,12 +369,12 @@ viewWordAnalysis : Maybe Line -> Element.Element Msg
 viewWordAnalysis maybe =
     case maybe of
         Just line ->
-            Element.column [ alignRight, Border.widthEach commentaryBorder ] (List.map viewWord (String.split " " line.text))
+            Element.column [ Element.paddingEach commentaryPadding, Border.width 2 ] (List.map viewWord (String.split " " line.text))
 
         Nothing ->
             Element.text "Error: No text could be found"
 
-
+viewCommentaryElement a = Element.paragraph [] [Element.el [] (Element.text a)]
 viewWord word =
     Element.el [] (Element.text word)
 
@@ -445,10 +443,10 @@ navigationOffSet =
 
 
 commentaryPadding =
-    { bottom = 10
-    , left = 150
-    , right = 0
-    , top = 0
+    { bottom = 5
+    , left = 5
+    , right = 5
+    , top = 5
     }
 
 navColorWhite =
