@@ -1,0 +1,15 @@
+tlg/
+.venv
+elm-stuff
+db.sqlite3
+elm.js
+elm-stuff
+.idea/
+.ipynb_checkpoints
+
+.stack-work
+__pycache__/
+fulltexts/
+index.html
+node_modules
+lsj_perseus.cex

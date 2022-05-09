@@ -1,0 +1,12 @@
+/Users/crawford.collins/OneDrive/theseus/server/app/Main.hs:
+  hash: 32376a450ec44693a87d907457c4e9658b42e042ff441a111c5fd97a70f73111
+/Users/crawford.collins/.stack/programs/x86_64-osx/ghc-8.10.7/lib/ghc-8.10.7/include/ghcversion.h:
+  hash: c013160c9aa8a98f4638616496dce720c23ceca8ef9d6b3212b654642fbda5e4
+? /Users/crawford.collins/OneDrive/theseus/server/.stack-work/dist/x86_64-osx/Cabal-3.2.1.0/build/server-exe/autogen/cabal_macros.h
+: hash: 641487ffdf64d3ad8017a41699ac9e4eac10504da1576e073ea6546a8210b489
+/Users/crawford.collins/OneDrive/theseus/server/package.yaml:
+  hash: 1ce4e597bf4576fc5e9665020d4c04098314619888de6d04267b4955c2dc6393
+/Users/crawford.collins/OneDrive/theseus/server/server.cabal:
+  hash: 071a328d365a1226f167ffd5c9aff81a27dbf122a29cc43f9319d72e375d701b
+? /Users/crawford.collins/OneDrive/theseus/server/.stack-work/dist/x86_64-osx/Cabal-3.2.1.0/build/server-exe/autogen/Paths_server.hs
+: hash: bfe3d791c1c01aaf32dc4facfbdf624b9adf8637d818caee4152d921c36a362d

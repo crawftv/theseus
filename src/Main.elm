@@ -334,7 +334,7 @@ viewCommentaryLine title chapter listLine arrayCommentary commentaryNumber =
     in
     case res of
         Just line ->
-            Element.row [Element.onRight (viewCommentary commentaryNumber arrayCommentary listLine)]
+            Element.row [ Element.onRight (viewCommentary commentaryNumber arrayCommentary listLine) ]
                 [ Element.el [ alignLeft, width (px 50) ] (Element.text (String.fromInt line.lineNumber))
                 , Element.el
                     [ padding 15
@@ -355,14 +355,14 @@ viewCommentary commentaryNumber arrayCommentary line =
     in
     case res of
         Just commentary ->
-            Element.textColumn [ Element.paddingEach commentaryPadding, spacing 5, Element.above (viewWordAnalysis (List.head line)),  Border.width 2 ]
+            Element.textColumn [ Element.paddingEach commentaryPadding, spacing 5, Element.above (viewWordAnalysis (List.head line)), Border.width 2 ]
                 [ viewCommentaryElement commentary.text
                 , viewCommentaryElement commentary.source
                 , viewCommentaryElement commentary.commentaryAuthorId
                 ]
 
         Nothing ->
-            Element.el [ Element.onRight (viewWordAnalysis (List.head line)),Element.width Element.fill  ] Element.none
+            Element.el [ Element.onRight (viewWordAnalysis (List.head line)), Element.width Element.fill ] Element.none
 
 
 viewWordAnalysis : Maybe Line -> Element.Element Msg
@@ -374,7 +374,11 @@ viewWordAnalysis maybe =
         Nothing ->
             Element.text "Error: No text could be found"
 
-viewCommentaryElement a = Element.paragraph [] [Element.el [] (Element.text a)]
+
+viewCommentaryElement a =
+    Element.paragraph [] [ Element.el [] (Element.text a) ]
+
+
 viewWord word =
     Element.el [] (Element.text word)
 
@@ -418,14 +422,19 @@ viewAllLines title chapter zipListLine =
             ]
         )
 
+
+
 -- this offsets the page for the navbar, so it doesnt cover text.
 -- viewNavigationOffSet =Element.el [ Element.width Element.fill, Region.navigation, alignTop, Element.paddingEach navigationOffSet, spacing 20 ] Element.none
-viewNavigationOffSet = Element.none
+
+
+viewNavigationOffSet =
+    Element.none
 
 
 viewTopNavigation =
-    Element.row [ Background.color navColorWhite, Element.width Element.fill, Region.navigation, Border.widthEach navBorders, Element.paddingXY 10 0, Element.height (Element.maximum 25  (Element.fill )) ]
-        [ Element.el [ ] (Element.text "Logo")
+    Element.row [ Background.color navColorWhite, Element.width Element.fill, Region.navigation, Border.widthEach navBorders, Element.paddingXY 10 0, Element.height (Element.maximum 25 Element.fill) ]
+        [ Element.el [] (Element.text "Logo")
         , Element.el [ alignRight ] (Element.text "Settings")
         ]
 
@@ -448,6 +457,7 @@ commentaryPadding =
     , right = 5
     , top = 5
     }
+
 
 navColorWhite =
     Element.fromRgb255

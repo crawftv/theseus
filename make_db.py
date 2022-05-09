@@ -36,6 +36,9 @@ def add_scrubbed_lines_to_db(chapter, book, subsection):
         text = re.sub(pattern=r"(ὑ|ὓ|ὕ|ὗ|ὺ|ύ|ῠ|ῡ|ὐ|ὒ|ὔ|ὖ|ῦ|ῢ|ΰ|ῧ|ύ)", repl="υ", string=text, count=100_000)
         text = re.sub(pattern=r"(ὠ|ὡ|ὢ|ὣ|ὤ|ὥ|ὦ|ὧ|ὼ|ώ|ῶ|ῳ|ῲ|ῴ|ᾠ|ᾡ|ᾢ|ᾣ|ᾤ|ᾥ|ᾦ|ᾧ|ῷ|ώ)", repl="ω", string=text,
                       count=100_000)
+        #ὨὩὪὫὬὭὮὯῺΏῼᾨᾩᾪᾫᾬᾭᾮᾯ
+        #ὈὉὊὋὌὍῸΌ
+        #Ῥ
         text = re.sub(pattern=r'\n’', repl='’\n', string=text, count=100_000)
         text = text.split("\n")
         text = [t.strip("0123456789") for t in text]
