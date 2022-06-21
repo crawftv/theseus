@@ -1,20 +1,22 @@
-module Main exposing (main)
+port module Main exposing (main)
 
 import Array exposing (Array)
 import Browser
-import Dict
 import Element exposing (alignLeft, alignRight, alignTop, padding, px, spaceEvenly, spacing, width)
 import Element.Background as Background
 import Element.Border as Border
-import Element.Events as Events exposing (onClick)
+import Element.Events exposing (onClick)
 import Element.Region as Region
+import Element.Input
 import Html
+import Html.Attributes
 import Http
 import Json.Decode as Decode exposing (Decoder, array, int, list, oneOf, string)
 import Json.Decode.Pipeline exposing (custom, hardcoded, required)
 import RemoteData exposing (RemoteData(..), WebData)
 import RemoteData.Http
 import Url.Builder exposing (crossOrigin)
+import Element.Input
 
 
 type Model
@@ -102,10 +104,11 @@ type alias Line =
 
 
 type Msg
-    = HandleBookPageResponse (WebData BookPage)
+    = UseBookPageResponseToRenderPage (WebData BookPage)
     | FetchBookPage String Int
     | FetchBookPageCommentary String Int Int
-    | HandleBookPageCommentaryResponse (WebData BookPageCommentary)
+    | UseBookPageCommentaryResponseToRenderPageWithVexflow (WebData BookPageCommentary)
+    | PlayAudio
 
 
 init : () -> ( Model, Cmd Msg )
@@ -210,11 +213,16 @@ update msg model =
         FetchBookPageCommentary title chapter lineNumber ->
             ( model, fetchBookPageCommentaryCmd title chapter lineNumber )
 
-        HandleBookPageResponse data ->
+        UseBookPageResponseToRenderPage data ->
             ( BookPage_ data, Cmd.none )
 
-        HandleBookPageCommentaryResponse data ->
-            ( BookPageCommentary_ data, Cmd.none )
+        PlayAudio ->
+            (model,  playAudio "")
+
+        UseBookPageCommentaryResponseToRenderPageWithVexflow data ->
+            ( BookPageCommentary_ data, createVexflow "test" )
+
+
 
 
 view : Model -> Browser.Document Msg
@@ -355,14 +363,26 @@ viewCommentary commentaryNumber arrayCommentary line =
     in
     case res of
         Just commentary ->
-            Element.textColumn [ Element.paddingEach commentaryPadding, spacing 5, Element.above (viewWordAnalysis (List.head line)), Border.width 2 ]
-                [ viewCommentaryElement commentary.text
+            Element.textColumn [ Element.paddingEach commentaryPadding, spacing 5, Border.width 2 ]
+                [ viewWordAnalysis_ line
+                , viewVexflow
+                , viewPlayAudioButton
+                , viewCommentaryElement commentary.text
                 , viewCommentaryElement commentary.source
                 , viewCommentaryElement commentary.commentaryAuthorId
                 ]
 
         Nothing ->
-            Element.el [ Element.onRight (viewWordAnalysis (List.head line)), Element.width Element.fill ] Element.none
+            Element.textColumn [ Element.width Element.fill ]
+                [ viewWordAnalysis_ line
+                , viewVexflow
+                , viewPlayAudioButton
+                ]
+
+
+viewWordAnalysis_ : List Line -> Element.Element Msg
+viewWordAnalysis_ line =
+    viewWordAnalysis (List.head line)
 
 
 viewWordAnalysis : Maybe Line -> Element.Element Msg
@@ -375,16 +395,24 @@ viewWordAnalysis maybe =
             Element.text "Error: No text could be found"
 
 
+viewVexflow : Element.Element msg
+viewVexflow =
+    Element.el [ Element.htmlAttribute (Html.Attributes.id "vexflow_output") ] Element.none
+
+viewPlayAudioButton = Element.el [Element.htmlAttribute (Html.Attributes.id "vexflow_output")] (Element.Input.button [] { label = Element.text "Play Audio", onPress = Just PlayAudio} )
+
 viewCommentaryElement a =
     Element.paragraph [] [ Element.el [] (Element.text a) ]
 
 
+viewWord : String -> Element.Element Msg
 viewWord word =
     Element.el [] (Element.text word)
 
 
-viewHomePage_ =
-    Element.text "Home Page"
+
+-- viewHomePage_ =
+--     Element.html (Html.div [] [Html.text "Home Page"] )
 
 
 viewAllBooks books =
@@ -432,6 +460,7 @@ viewNavigationOffSet =
     Element.none
 
 
+viewTopNavigation : Element.Element msg
 viewTopNavigation =
     Element.row [ Background.color navColorWhite, Element.width Element.fill, Region.navigation, Border.widthEach navBorders, Element.paddingXY 10 0, Element.height (Element.maximum 25 Element.fill) ]
         [ Element.el [] (Element.text "Logo")
@@ -439,6 +468,7 @@ viewTopNavigation =
         ]
 
 
+navBorders : { bottom : number, left : number, right : number, top : number }
 navBorders =
     { bottom = 1
     , left = 0
@@ -447,10 +477,12 @@ navBorders =
     }
 
 
+navigationOffSet : { top : number, bottom : number, right : number, left : number }
 navigationOffSet =
     { top = 25, bottom = 0, right = 0, left = 0 }
 
 
+commentaryPadding : { bottom : Int, left : Int, right : Int, top : Int }
 commentaryPadding =
     { bottom = 5
     , left = 5
@@ -459,6 +491,7 @@ commentaryPadding =
     }
 
 
+navColorWhite : Element.Color
 navColorWhite =
     Element.fromRgb255
         { red = 255
@@ -479,9 +512,19 @@ main =
 
 fetchBookPageCmd : Title -> Chapter -> Cmd Msg
 fetchBookPageCmd title chapter =
-    RemoteData.Http.getWithConfig RemoteData.Http.defaultConfig (crossOrigin "http://localhost:8080/books" [ title, String.fromInt chapter ] []) HandleBookPageResponse bookPageDecoder
+    RemoteData.Http.getWithConfig RemoteData.Http.defaultConfig (crossOrigin "http://localhost:8080/books" [ title, String.fromInt chapter ] []) UseBookPageResponseToRenderPage bookPageDecoder
 
 
 fetchBookPageCommentaryCmd : Title -> Chapter -> LineNumber -> Cmd Msg
 fetchBookPageCommentaryCmd title chapter lineNumber =
-    RemoteData.Http.getWithConfig RemoteData.Http.defaultConfig (crossOrigin "http://localhost:8080/books" [ title, String.fromInt chapter, String.fromInt lineNumber ] []) HandleBookPageCommentaryResponse bookPageCommentaryDecoder
+    RemoteData.Http.getWithConfig RemoteData.Http.defaultConfig (crossOrigin "http://localhost:8080/books" [ title, String.fromInt chapter, String.fromInt lineNumber ] []) UseBookPageCommentaryResponseToRenderPageWithVexflow bookPageCommentaryDecoder
+
+
+
+-- Ports
+
+
+port playAudio : String -> Cmd msg
+
+
+port createVexflow : String -> Cmd msg

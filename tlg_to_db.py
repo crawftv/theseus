@@ -2,7 +2,7 @@ import xml.etree.ElementTree as ET
 import re
 from typing import Union, Literal
 import time
-
+import tqdm
 
 
 
@@ -31,7 +31,9 @@ class TLGGreekText:
         return tag.tag == "{http://www.tei-c.org/ns/1.0}"+ f"{tag_name}"
     def __init__(self, xml_path: str):
         self.lines = []
+        textpart = None
         sub_textpart = ""
+        speaker = None
         with open(xml_path) as file:
             et = ET.parse(file).iter()
 
@@ -70,16 +72,21 @@ class TLGGreekText:
             elif self.parse_tag(tag, "del"):
                 self.lines.append(
                     Line(
-                        speaker=speaker,
+                        speaker= speaker,
                         text=tag.text,
                         line_number=line_number,
                         bracketed=True,
                         sub_textpart=sub_textpart,
                         textpart=textpart,
-                        tag= tag
+                        tag = tag
                     ))
 
 
-x = TLGGreekText(xml_path="tlg/tlg006/tlg0006.tlg006.perseus-grc2.xml")
-for i in x.lines:
-    print(i)
+import glob
+files = sorted([ i for i in glob.glob("canonical-greekLit/data/*/*/*.xml")
+          if not i.endswith("__cts__.xml")
+          and  "grc" in i])
+for file in tqdm.tqdm(files):
+    print(file)
+    x = TLGGreekText(xml_path=file)
+    x.lines

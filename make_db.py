@@ -159,6 +159,45 @@ def main(metadata):
             add_scrubbed_lines_to_db(chapter, i["book"], None)
             add_full_lines_to_db(chapter, i["book"], None)
 
+def create_dioris(force:bool = False):
+    """create the database to hold dioris info"""
+    with sqlite3.connect("db.sqlite3") as sql:
+        if force:
+            try:
+                sql.execute("DROP TABLE dioris")
+            except:
+                pass
+        sql.execute(
+            """CREATE TABLE dioris_works(
+            title TEXT,
+            author TEXT,
+            tlgAuthor TEXT,
+            tlgId TEXT,
+            funder TEXT,
+            );""")
+        sql.execute("""
+        CREATE TABLE dioris_lemmas 
+        
+        """)
+
+def create_tlg(force:bool = False):
+    """create the database to hold tlg lines"""
+    with sqlite3.connect("db.sqlite3") as sql:
+        if force:
+            try:
+                sql.execute("DROP TABLE tlg_lines")
+            except:
+                pass
+        sql.execute(
+            """CREATE TABLE tlg_lines(
+            speaker TEXT,
+            text TEXT,
+            line_number INT,
+            bracketed INT,
+            sub_textpart TEXT
+            textpart TEXT
+            tag TEXT)
+            """)
 
 if __name__ == "__main__":
     # metadata = [
@@ -166,4 +205,4 @@ if __name__ == "__main__":
     #      {"author": "homer", "book": "odyssey", "path": "fulltexts/odyssey/"}
     #  ]
     # main(metadata)
-    create_commentary()
+    create_tlg()

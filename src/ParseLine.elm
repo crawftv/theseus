@@ -70,7 +70,7 @@ liquidConsonant =
 continuantConsonants =
     List.concat [ nasalConsonants, fricativeConsonant, liquidConsonant ]
 
-
+consonants = continuantConsonants ++ doubleConsonant ++ stopConsonants
 chompContinuant =
     oneOf
         [ backtrackable (succeed () |. oneOf (chompLetter fricativeConsonant) |. oneOf (chompLetter stopConsonants))
