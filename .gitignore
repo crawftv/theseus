@@ -7,7 +7,7 @@ elm-stuff
 .idea/
 .ipynb_checkpoints
 
-/server/.stack-work/
+server/.stack-work
 __pycache__/
 fulltexts/
 index.html
