@@ -8,8 +8,13 @@ elm-stuff
 .ipynb_checkpoints
 
 server/.stack-work
+.stack-work/
 __pycache__/
 fulltexts/
 index.html
 node_modules
 lsj_perseus.cex
+.DS_Store
+canonical-greekLit/
+diorisis.zip
+diorisis/
