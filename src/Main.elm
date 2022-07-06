@@ -1,4 +1,4 @@
-port module Main exposing (main)
+port module Main exposing (Model, Msg, main)
 
 import Array exposing (Array)
 import Browser
@@ -6,17 +6,18 @@ import Element exposing (alignLeft, alignRight, alignTop, padding, px, spaceEven
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
-import Element.Region as Region
 import Element.Input
+import Element.Region as Region
 import Html
 import Html.Attributes
 import Http
-import Json.Decode as Decode exposing (Decoder, array, int, list, oneOf, string)
-import Json.Decode.Pipeline exposing (custom, hardcoded, required)
+import Json.Decode as Decode exposing (Decoder, array, int, list, string)
+import Json.Decode.Pipeline exposing (hardcoded, required)
+import Json.Encode
+import ParseLine exposing (parseString)
 import RemoteData exposing (RemoteData(..), WebData)
 import RemoteData.Http
 import Url.Builder exposing (crossOrigin)
-import Element.Input
 
 
 type Model
@@ -107,8 +108,8 @@ type Msg
     = UseBookPageResponseToRenderPage (WebData BookPage)
     | FetchBookPage String Int
     | FetchBookPageCommentary String Int Int
-    | UseBookPageCommentaryResponseToRenderPageWithVexflow (WebData BookPageCommentary)
-    | PlayAudio
+    | UseBookPageCommentaryResponseToRenderPage (WebData BookPageCommentary)
+    | PlayAudio (List Line)
 
 
 init : () -> ( Model, Cmd Msg )
@@ -119,7 +120,7 @@ init _ =
 
 
 subscriptions : Model -> Sub Msg
-subscriptions model =
+subscriptions _ =
     Sub.none
 
 
@@ -176,7 +177,7 @@ bookDecoder =
 
 
 decodeError : Model -> Http.Error -> Browser.Document Msg
-decodeError model error =
+decodeError _ error =
     case error of
         Http.BadUrl string ->
             { title = "Bad Url"
@@ -216,13 +217,11 @@ update msg model =
         UseBookPageResponseToRenderPage data ->
             ( BookPage_ data, Cmd.none )
 
-        PlayAudio ->
-            (model,  playAudio "")
+        PlayAudio listLine ->
+            ( model, playAudio (createNotes_ listLine) )
 
-        UseBookPageCommentaryResponseToRenderPageWithVexflow data ->
-            ( BookPageCommentary_ data, createVexflow "test" )
-
-
+        UseBookPageCommentaryResponseToRenderPage data ->
+            ( BookPageCommentary_ data, createVexflow (createNotes data) )
 
 
 view : Model -> Browser.Document Msg
@@ -279,7 +278,7 @@ view model =
                         ]
                     }
 
-
+viewPageComposition : { a | allBooks : List Book, title : String, chapter : Int, linesOfText : ZipListLine } -> Html.Html Msg
 viewPageComposition page =
     Element.layout [ spaceEvenly, Element.inFront viewTopNavigation, Element.width Element.fill ] <|
         Element.column [ padding 20 ]
@@ -289,6 +288,7 @@ viewPageComposition page =
             ]
 
 
+viewCommonToAll :  { a | allBooks : List Book, title : String, chapter : Int, linesOfText : ZipListLine } -> List (Element.Element Msg)
 viewCommonToAll page =
     [ viewAllBooks page.allBooks
     , Element.textColumn [ spacing 5 ]
@@ -337,6 +337,7 @@ viewAllLinesCommentary title chapter zipListLine commentary commentaryNumber =
 viewCommentaryLine : Title -> Chapter -> List Line -> Array Commentary -> CommentaryNumber -> Element.Element Msg
 viewCommentaryLine title chapter listLine arrayCommentary commentaryNumber =
     let
+        res : Maybe Line
         res =
             List.head listLine
     in
@@ -358,6 +359,7 @@ viewCommentaryLine title chapter listLine arrayCommentary commentaryNumber =
 viewCommentary : CommentaryNumber -> Array Commentary -> List Line -> Element.Element Msg
 viewCommentary commentaryNumber arrayCommentary line =
     let
+        res : Maybe Commentary
         res =
             Array.get commentaryNumber arrayCommentary
     in
@@ -366,7 +368,7 @@ viewCommentary commentaryNumber arrayCommentary line =
             Element.textColumn [ Element.paddingEach commentaryPadding, spacing 5, Border.width 2 ]
                 [ viewWordAnalysis_ line
                 , viewVexflow
-                , viewPlayAudioButton
+                , viewPlayAudioButton line
                 , viewCommentaryElement commentary.text
                 , viewCommentaryElement commentary.source
                 , viewCommentaryElement commentary.commentaryAuthorId
@@ -376,7 +378,7 @@ viewCommentary commentaryNumber arrayCommentary line =
             Element.textColumn [ Element.width Element.fill ]
                 [ viewWordAnalysis_ line
                 , viewVexflow
-                , viewPlayAudioButton
+                , viewPlayAudioButton line
                 ]
 
 
@@ -399,8 +401,13 @@ viewVexflow : Element.Element msg
 viewVexflow =
     Element.el [ Element.htmlAttribute (Html.Attributes.id "vexflow_output") ] Element.none
 
-viewPlayAudioButton = Element.el [Element.htmlAttribute (Html.Attributes.id "vexflow_output")] (Element.Input.button [] { label = Element.text "Play Audio", onPress = Just PlayAudio} )
 
+viewPlayAudioButton : List Line -> Element.Element Msg
+viewPlayAudioButton line =
+    Element.el [ Element.htmlAttribute (Html.Attributes.id "vexflow_output") ] (Element.Input.button [] { label = Element.text "Play Audio", onPress = Just (PlayAudio line) })
+
+
+viewCommentaryElement : String -> Element.Element msg
 viewCommentaryElement a =
     Element.paragraph [] [ Element.el [] (Element.text a) ]
 
@@ -415,6 +422,7 @@ viewWord word =
 --     Element.html (Html.div [] [Html.text "Home Page"] )
 
 
+viewAllBooks : List Book -> Element.Element Msg
 viewAllBooks books =
     Element.column [ spacing 5, alignTop ] (List.map viewBook books)
 
@@ -456,6 +464,7 @@ viewAllLines title chapter zipListLine =
 -- viewNavigationOffSet =Element.el [ Element.width Element.fill, Region.navigation, alignTop, Element.paddingEach navigationOffSet, spacing 20 ] Element.none
 
 
+viewNavigationOffSet : Element.Element msg
 viewNavigationOffSet =
     Element.none
 
@@ -477,9 +486,10 @@ navBorders =
     }
 
 
-navigationOffSet : { top : number, bottom : number, right : number, left : number }
-navigationOffSet =
-    { top = 25, bottom = 0, right = 0, left = 0 }
+
+-- navigationOffSet : { top : number, bottom : number, right : number, left : number }
+-- navigationOffSet =
+--     { top = 25, bottom = 0, right = 0, left = 0 }
 
 
 commentaryPadding : { bottom : Int, left : Int, right : Int, top : Int }
@@ -501,6 +511,7 @@ navColorWhite =
         }
 
 
+main : Program () Model Msg
 main =
     Browser.document
         { init = init
@@ -517,14 +528,41 @@ fetchBookPageCmd title chapter =
 
 fetchBookPageCommentaryCmd : Title -> Chapter -> LineNumber -> Cmd Msg
 fetchBookPageCommentaryCmd title chapter lineNumber =
-    RemoteData.Http.getWithConfig RemoteData.Http.defaultConfig (crossOrigin "http://localhost:8080/books" [ title, String.fromInt chapter, String.fromInt lineNumber ] []) UseBookPageCommentaryResponseToRenderPageWithVexflow bookPageCommentaryDecoder
+    RemoteData.Http.getWithConfig RemoteData.Http.defaultConfig (crossOrigin "http://localhost:8080/books" [ title, String.fromInt chapter, String.fromInt lineNumber ] []) UseBookPageCommentaryResponseToRenderPage bookPageCommentaryDecoder
+
+
+createNotes : WebData BookPageCommentary -> Json.Encode.Value
+createNotes data =
+    case data of
+        Success bookPageCommentary ->
+            createNotes_ bookPageCommentary.linesOfText.p2
+
+        _ ->
+            -- Json.Encode.encode 4 <|
+            Json.Encode.null
+
+
+createNotes_ : List Line -> Json.Encode.Value
+createNotes_ lines =
+    let
+        line : Maybe Line
+        line =
+            List.head lines
+    in
+    case line of
+        Just line_ ->
+            parseString line_.text
+
+        Nothing ->
+            -- Json.Encode.encode 4 <|
+            Json.Encode.null
 
 
 
 -- Ports
 
 
-port playAudio : String -> Cmd msg
+port playAudio : Json.Encode.Value -> Cmd msg
 
 
-port createVexflow : String -> Cmd msg
+port createVexflow : Json.Encode.Value -> Cmd msg

@@ -1,7 +1,7 @@
 module TestParseLine exposing (..)
 
-import Array exposing (..)
-import Expect exposing (Expectation)
+import Array
+import Expect
 import ParseLine exposing (..)
 import Parser exposing (getChompedString, run)
 import Test exposing (..)
@@ -173,57 +173,89 @@ testStatements =
                 run statements "ἄνδρα μοι ἔννεπε, μοῦσα, πολύτροπον, ὃς μάλα πολλὰ"
                     |> Expect.equal
                         (Ok
-                            (List.concat
-                                [ [ Sound "" "ἄ", Sound "ν" "", Sound "δρ" "α" ]
-                                , [ Sound " μ" "οι" ]
-                                , [ Sound " " "ἔ", Sound "ν" "", Sound "ν" "ε", Sound "π" "ε," ]
-                                , [ Sound " μ" "οῦ", Sound "σ" "α," ]
-                                , [ Sound " π" "ο", Sound "λ" "ύ", Sound "τρ" "ο", Sound "π" "ο", Sound "ν" "," ]
-                                , [ Sound " " "ὃ", Sound "ς" " " ]
-                                , [ Sound "μ" "ά", Sound "λ" "α" ]
-                                , [ Sound " π" "ο", Sound "λ" "", Sound "λ" "ὰ" ]
-                                ]
-                            )
+                            [ Sound "" "ἄ"
+                            , Sound "ν" ""
+                            , Sound "δρ" "α"
+                            , Sound " μ" "οι"
+                            , Sound " " "ἔ"
+                            , Sound "ν" ""
+                            , Sound "ν" "ε"
+                            , Sound "π" "ε,"
+                            , Sound " μ" "οῦ"
+                            , Sound "σ" "α,"
+                            , Sound " π" "ο"
+                            , Sound "λ" "ύ"
+                            , Sound "τρ" "ο"
+                            , Sound "π" "ο"
+                            , Sound "ν" ","
+                            , Sound " " "ὃ"
+                            , Sound "ς" " "
+                            , Sound "μ" "ά"
+                            , Sound "λ" "α"
+                            , Sound " π" "ο"
+                            , Sound "λ" ""
+                            , Sound "λ" "ὰ"
+                            ]
                         )
         , test "σκότος ἔμὸν φαός" <|
             \_ ->
                 run statements "σκότος ἔμὸν φαός"
                     |> Expect.equal
                         (Ok
-                            (List.concat
-                                [ [ Sound "σκ" "ό", Sound "τ" "ο", Sound "ς" " ἔ" ]
-                                , [ Sound "μ" "ὸ", Sound "ν" " " ]
-                                , [ Sound "φ" "α", Sound "" "ό", Sound "ς" "" ]
-                                ]
-                            )
+                            [ Sound "σκ" "ό"
+                            , Sound "τ" "ο"
+                            , Sound "ς" " ἔ"
+                            , Sound "μ" "ὸ"
+                            , Sound "ν" " "
+                            , Sound "φ" "α"
+                            , Sound "" "ό"
+                            , Sound "ς" ""
+                            ]
                         )
         , test "ἔρεβος ὦ φαεννότατον ὡς ἐμοί" <|
             \_ ->
                 run statements "ἔρεβος ὦ φαεννότατον ὡς ἐμοί"
                     |> Expect.equal
                         (Ok
-                            (List.concat
-                                [ [ Sound "" "ἔ", Sound "ρ" "ε", Sound "β" "ο", Sound "ς" " ὦ" ]
-                                , [ Sound " φ" "α", Sound "" "ε", Sound "ν" "", Sound "ν" "ό", Sound "τ" "α", Sound "τ" "ο" ]
-                                , [ Sound "ν" " ὡ" ]
-                                , [ Sound "ς" " ἐ" ]
-                                , [ Sound "μ" "οί" ]
-                                ]
-                            )
+                            [ Sound "" "ἔ"
+                            , Sound "ρ" "ε"
+                            , Sound "β" "ο"
+                            , Sound "ς" " ὦ"
+                            , Sound " φ" "α"
+                            , Sound "" "ε"
+                            , Sound "ν" ""
+                            , Sound "ν" "ό"
+                            , Sound "τ" "α"
+                            , Sound "τ" "ο"
+                            , Sound "ν" " ὡ"
+                            , Sound "ς" " ἐ"
+                            , Sound "μ" "οί"
+                            ]
                         )
         , test "μῆνιν ἄειδε θεὰ Πηληϊάδεω Ἀχιλῆος" <|
             \_ ->
                 run statements "μῆνιν ἄειδε θεὰ Πηληϊάδεω Ἀχιλῆος"
                     |> Expect.equal
                         (Ok
-                            (List.concat
-                                [ [ Sound "μ" "ῆ", Sound "ν" "ι", Sound "ν" " ἄ" ]
-                                , [ Sound "" "ει", Sound "δ" "ε" ]
-                                , [ Sound " θ" "ε", Sound "" "ὰ" ]
-                                , [ Sound " Π" "η", Sound "λ" "η", Sound "" "ϊ", Sound "" "ά", Sound "δ" "ε", Sound "" "ω" ]
-                                , [ Sound " " "Ἀ", Sound "χ" "ι", Sound "λ" "ῆ", Sound "" "ο", Sound "ς" "" ]
-                                ]
-                            )
+                            [ Sound "μ" "ῆ"
+                            , Sound "ν" "ι"
+                            , Sound "ν" " ἄ"
+                            , Sound "" "ει"
+                            , Sound "δ" "ε"
+                            , Sound " θ" "ε"
+                            , Sound "" "ὰ"
+                            , Sound " Π" "η"
+                            , Sound "λ" "η"
+                            , Sound "" "ϊ"
+                            , Sound "" "ά"
+                            , Sound "δ" "ε"
+                            , Sound "" "ω"
+                            , Sound " " "Ἀ"
+                            , Sound "χ" "ι"
+                            , Sound "λ" "ῆ"
+                            , Sound "" "ο"
+                            , Sound "ς" ""
+                            ]
                         )
         ]
 
@@ -235,17 +267,29 @@ test_getSounds =
             \_ ->
                 getSounds "ἄνδρα μοι ἔννεπε, μοῦσα, πολύτροπον, ὃς μάλα πολλὰ"
                     |> Expect.equal
-                        (List.concat
-                            [ [ Sound "" "ἄ", Sound "ν" "", Sound "δρ" "α" ]
-                            , [ Sound " μ" "οι" ]
-                            , [ Sound " " "ἔ", Sound "ν" "", Sound "ν" "ε", Sound "π" "ε," ]
-                            , [ Sound " μ" "οῦ", Sound "σ" "α," ]
-                            , [ Sound " π" "ο", Sound "λ" "ύ", Sound "τρ" "ο", Sound "π" "ο", Sound "ν" "," ]
-                            , [ Sound " " "ὃ", Sound "ς" " " ]
-                            , [ Sound "μ" "ά", Sound "λ" "α" ]
-                            , [ Sound " π" "ο", Sound "λ" "", Sound "λ" "ὰ" ]
-                            ]
-                        )
+                        [ Sound "" "ἄ"
+                        , Sound "ν" ""
+                        , Sound "δρ" "α"
+                        , Sound " μ" "οι"
+                        , Sound " " "ἔ"
+                        , Sound "ν" ""
+                        , Sound "ν" "ε"
+                        , Sound "π" "ε,"
+                        , Sound " μ" "οῦ"
+                        , Sound "σ" "α,"
+                        , Sound " π" "ο"
+                        , Sound "λ" "ύ"
+                        , Sound "τρ" "ο"
+                        , Sound "π" "ο"
+                        , Sound "ν" ","
+                        , Sound " " "ὃ"
+                        , Sound "ς" " "
+                        , Sound "μ" "ά"
+                        , Sound "λ" "α"
+                        , Sound " π" "ο"
+                        , Sound "λ" ""
+                        , Sound "λ" "ὰ"
+                        ]
         ]
 
 
@@ -280,17 +324,31 @@ test_longShortVowels =
         ]
 
 
+odyssey_1_1 : List Sound
 odyssey_1_1 =
-    List.concat
-        [ [ Sound "" "ἄ", Sound "ν" "", Sound "δρ" "α" ]
-        , [ Sound " μ" "οι" ]
-        , [ Sound " " "ἔ", Sound "ν" "", Sound "ν" "ε", Sound "π" "ε," ]
-        , [ Sound " μ" "οῦ", Sound "σ" "α," ]
-        , [ Sound " π" "ο", Sound "λ" "ύ", Sound "τρ" "ο", Sound "π" "ο", Sound "ν" "," ]
-        , [ Sound " " "ὃ", Sound "ς" " " ]
-        , [ Sound "μ" "ά", Sound "λ" "α" ]
-        , [ Sound " π" "ο", Sound "λ" "", Sound "λ" "ὰ" ]
-        ]
+    [ Sound "" "ἄ"
+    , Sound "ν" ""
+    , Sound "δρ" "α"
+    , Sound " μ" "οι"
+    , Sound " " "ἔ"
+    , Sound "ν" ""
+    , Sound "ν" "ε"
+    , Sound "π" "ε,"
+    , Sound " μ" "οῦ"
+    , Sound "σ" "α,"
+    , Sound " π" "ο"
+    , Sound "λ" "ύ"
+    , Sound "τρ" "ο"
+    , Sound "π" "ο"
+    , Sound "ν" ","
+    , Sound " " "ὃ"
+    , Sound "ς" " "
+    , Sound "μ" "ά"
+    , Sound "λ" "α"
+    , Sound " π" "ο"
+    , Sound "λ" ""
+    , Sound "λ" "ὰ"
+    ]
 
 
 test_mapLongShortVowels : Test
@@ -387,12 +445,12 @@ test_mapLookAhead =
         ]
 
 
-test_parseString : Test
-test_parseString =
+test_stringToSyllableSounds : Test
+test_stringToSyllableSounds =
     describe "test_parseString"
         [ test "πολλὰ δ’ὅ γ’ἐν πόντῳ πάθεν ἄλγεα ὃν κατὰ θυμόν," <|
             \_ ->
-                parseString "πολλὰ δ’ὅ γ’ἐν πόντῳ πάθεν ἄλγεα ὃν κατὰ θυμόν,"
+                stringToSyllableSounds "πολλὰ δ’ὅ γ’ἐν πόντῳ πάθεν ἄλγεα ὃν κατὰ θυμόν,"
                     |> Expect.equal
                         [ SyllableSound "π" "ο" LongSyllable
                         , SyllableSound "λ" "" NoSyllable
@@ -419,7 +477,7 @@ test_parseString =
                         ]
         , test "ἄνδρα μοι ἔννεπε, μοῦσα, πολύτροπον, ὃς μάλα πολλὰ" <|
             \_ ->
-                parseString "ἄνδρα μοι ἔννεπε, μοῦσα, πολύτροπον, ὃς μάλα πολλὰ"
+                stringToSyllableSounds "ἄνδρα μοι ἔννεπε, μοῦσα, πολύτροπον, ὃς μάλα πολλὰ"
                     |> Expect.equal
                         [ { consonant = "", syllableLength = LongSyllable, vowel = "ἄ" }
                         , { consonant = "ν", syllableLength = NoSyllable, vowel = "" }
@@ -432,67 +490,233 @@ test_parseString =
                         , { consonant = " μ", syllableLength = LongSyllable, vowel = "οῦ" }
                         , { consonant = "σ", syllableLength = ShortSyllable, vowel = "α," }
                         , { consonant = " π", syllableLength = ShortSyllable, vowel = "ο" }
-                        ,{ consonant = "λ", syllableLength = LongSyllable, vowel = "ύ" }
-                        ,{ consonant = "τρ", syllableLength = ShortSyllable, vowel = "ο" }
-                        ,{ consonant = "π", syllableLength = ShortSyllable, vowel = "ο" }
-                        ,{ consonant = "ν", syllableLength = NoSyllable, vowel = "," }
-                        ,{ consonant = " ", syllableLength = LongSyllable, vowel = "ὃ" }
-                        ,{ consonant = "ς", syllableLength = NoSyllable, vowel = " " }
-                        ,{ consonant = "μ", syllableLength = ShortSyllable, vowel = "ά" }
-                        ,{ consonant = "λ", syllableLength = ShortSyllable, vowel = "α" }
-                        ,{ consonant = " π", syllableLength = LongSyllable, vowel = "ο" }
-                        ,{ consonant = "λ", syllableLength = NoSyllable, vowel = "" }
-                        ,{ consonant = "λ", syllableLength = ShortSyllable, vowel = "ὰ" }]
+                        , { consonant = "λ", syllableLength = LongSyllable, vowel = "ύ" }
+                        , { consonant = "τρ", syllableLength = ShortSyllable, vowel = "ο" }
+                        , { consonant = "π", syllableLength = ShortSyllable, vowel = "ο" }
+                        , { consonant = "ν", syllableLength = NoSyllable, vowel = "," }
+                        , { consonant = " ", syllableLength = LongSyllable, vowel = "ὃ" }
+                        , { consonant = "ς", syllableLength = NoSyllable, vowel = " " }
+                        , { consonant = "μ", syllableLength = ShortSyllable, vowel = "ά" }
+                        , { consonant = "λ", syllableLength = ShortSyllable, vowel = "α" }
+                        , { consonant = " π", syllableLength = LongSyllable, vowel = "ο" }
+                        , { consonant = "λ", syllableLength = NoSyllable, vowel = "" }
+                        , { consonant = "λ", syllableLength = ShortSyllable, vowel = "ὰ" }
+                        ]
         , test "πλάγχθη, ἐπεὶ Τροίης ἱερὸν πτολίεθρον ἔπερσεν·" <|
             \_ ->
-                parseString "πλάγχθη, ἐπεὶ Τροίης ἱερὸν πτολίεθρον ἔπερσεν·"
+                stringToSyllableSounds "πλάγχθη, ἐπεὶ Τροίης ἱερὸν πτολίεθρον ἔπερσεν·"
                     |> Expect.equal
-                    [ { consonant = "πλ", syllableLength = LongSyllable, vowel = "ά" }
-                    , { consonant = "γ", syllableLength = NoSyllable, vowel = "" }
-                    , { consonant = "χ", syllableLength = NoSyllable, vowel = "" }
-                    , { consonant = "θ", syllableLength = ShortSyllable, vowel = "η," }
-                    , { consonant = " ", syllableLength = ShortSyllable, vowel = "ἐ" }
-                    , { consonant = "π", syllableLength = LongSyllable, vowel = "εὶ" }
-                    , { consonant = " Τρ", syllableLength = LongSyllable, vowel = "οί" }
-                    , { consonant = "", syllableLength = LongSyllable, vowel = "η" }
-                    , { consonant = "ς", syllableLength = ShortSyllable, vowel = " ἱ" }
-                    , { consonant = "", syllableLength = ShortSyllable, vowel = "ε" }
-                    , { consonant = "ρ", syllableLength = LongSyllable, vowel = "ὸ" }
-                    , { consonant = "ν", syllableLength = NoSyllable, vowel = " " }
-                    , { consonant = "π", syllableLength = NoSyllable, vowel = "" }
-                    , { consonant = "τ", syllableLength = ShortSyllable, vowel = "ο" }
-                    , { consonant = "λ", syllableLength = ShortSyllable, vowel = "ί" }
-                    , { consonant = "", syllableLength = LongSyllable, vowel = "ε" }
-                    , { consonant = "θρ", syllableLength = ShortSyllable, vowel = "ο" }
-                    , { consonant = "ν", syllableLength = ShortSyllable, vowel = " ἔ" }
-                    , { consonant = "π", syllableLength = LongSyllable, vowel = "ε" }
-                    , { consonant = "ρ", syllableLength = NoSyllable, vowel = "" }
-                    , { consonant = "σ", syllableLength = ShortSyllable, vowel = "ε" }
-                    , { consonant = "ν", syllableLength = NoSyllable, vowel = "" }
-                    ]
+                        [ { consonant = "πλ", syllableLength = LongSyllable, vowel = "ά" }
+                        , { consonant = "γ", syllableLength = NoSyllable, vowel = "" }
+                        , { consonant = "χ", syllableLength = NoSyllable, vowel = "" }
+                        , { consonant = "θ", syllableLength = ShortSyllable, vowel = "η," }
+                        , { consonant = " ", syllableLength = ShortSyllable, vowel = "ἐ" }
+                        , { consonant = "π", syllableLength = LongSyllable, vowel = "εὶ" }
+                        , { consonant = " Τρ", syllableLength = LongSyllable, vowel = "οί" }
+                        , { consonant = "", syllableLength = LongSyllable, vowel = "η" }
+                        , { consonant = "ς", syllableLength = ShortSyllable, vowel = " ἱ" }
+                        , { consonant = "", syllableLength = ShortSyllable, vowel = "ε" }
+                        , { consonant = "ρ", syllableLength = LongSyllable, vowel = "ὸ" }
+                        , { consonant = "ν", syllableLength = NoSyllable, vowel = " " }
+                        , { consonant = "π", syllableLength = NoSyllable, vowel = "" }
+                        , { consonant = "τ", syllableLength = ShortSyllable, vowel = "ο" }
+                        , { consonant = "λ", syllableLength = ShortSyllable, vowel = "ί" }
+                        , { consonant = "", syllableLength = LongSyllable, vowel = "ε" }
+                        , { consonant = "θρ", syllableLength = ShortSyllable, vowel = "ο" }
+                        , { consonant = "ν", syllableLength = ShortSyllable, vowel = " ἔ" }
+                        , { consonant = "π", syllableLength = LongSyllable, vowel = "ε" }
+                        , { consonant = "ρ", syllableLength = NoSyllable, vowel = "" }
+                        , { consonant = "σ", syllableLength = ShortSyllable, vowel = "ε" }
+                        , { consonant = "ν", syllableLength = NoSyllable, vowel = "" }
+                        ]
         , test "πολλῶν δ’ἀνθρώπων ἴδεν ἄστεα καὶ νόον ἔγνω," <|
             \_ ->
-                parseString "πολλῶν δ’ἀνθρώπων ἴδεν ἄστεα καὶ νόον ἔγνω,"
+                stringToSyllableSounds "πολλῶν δ’ἀνθρώπων ἴδεν ἄστεα καὶ νόον ἔγνω,"
                     |> Expect.equal
-                     [ { consonant = "π", syllableLength = LongSyllable, vowel = "ο" }
-                     , { consonant = "λ", syllableLength = NoSyllable, vowel = "" }
-                     , { consonant = "λ", syllableLength = LongSyllable, vowel = "ῶ" }
-                     , { consonant = "ν", syllableLength = NoSyllable, vowel = " " }
-                     , { consonant = "δ", syllableLength = LongSyllable, vowel = "’ἀ" }
-                     , { consonant = "ν", syllableLength = NoSyllable, vowel = "" }
-                     , { consonant = "θρ", syllableLength = LongSyllable, vowel = "ώ" }
-                     , { consonant = "π", syllableLength = LongSyllable, vowel = "ω" }
-                     , { consonant = "ν", syllableLength = ShortSyllable, vowel = " ἴ" }
-                     , { consonant = "δ", syllableLength = ShortSyllable, vowel = "ε" }
-                     , { consonant = "ν", syllableLength = LongSyllable, vowel = " ἄ" }
-                     , { consonant = "στ", syllableLength = ShortSyllable, vowel = "ε" }
-                     , { consonant = "", syllableLength = ShortSyllable, vowel = "α" }
-                     , { consonant = " κ", syllableLength = LongSyllable, vowel = "αὶ" }
-                     , { consonant = " ν", syllableLength = ShortSyllable, vowel = "ό" }
-                     , { consonant = "", syllableLength = ShortSyllable, vowel = "ο" }
-                     , { consonant = "ν", syllableLength = LongSyllable, vowel = " ἔ" }
-                     , { consonant = "γ", syllableLength = NoSyllable, vowel = "" }
-                     , { consonant = "ν", syllableLength = ShortSyllable, vowel = "ω," }
-                     ]
+                        [ { consonant = "π", syllableLength = LongSyllable, vowel = "ο" }
+                        , { consonant = "λ", syllableLength = NoSyllable, vowel = "" }
+                        , { consonant = "λ", syllableLength = LongSyllable, vowel = "ῶ" }
+                        , { consonant = "ν", syllableLength = NoSyllable, vowel = " " }
+                        , { consonant = "δ", syllableLength = LongSyllable, vowel = "’ἀ" }
+                        , { consonant = "ν", syllableLength = NoSyllable, vowel = "" }
+                        , { consonant = "θρ", syllableLength = LongSyllable, vowel = "ώ" }
+                        , { consonant = "π", syllableLength = LongSyllable, vowel = "ω" }
+                        , { consonant = "ν", syllableLength = ShortSyllable, vowel = " ἴ" }
+                        , { consonant = "δ", syllableLength = ShortSyllable, vowel = "ε" }
+                        , { consonant = "ν", syllableLength = LongSyllable, vowel = " ἄ" }
+                        , { consonant = "στ", syllableLength = ShortSyllable, vowel = "ε" }
+                        , { consonant = "", syllableLength = ShortSyllable, vowel = "α" }
+                        , { consonant = " κ", syllableLength = LongSyllable, vowel = "αὶ" }
+                        , { consonant = " ν", syllableLength = ShortSyllable, vowel = "ό" }
+                        , { consonant = "", syllableLength = ShortSyllable, vowel = "ο" }
+                        , { consonant = "ν", syllableLength = LongSyllable, vowel = " ἔ" }
+                        , { consonant = "γ", syllableLength = NoSyllable, vowel = "" }
+                        , { consonant = "ν", syllableLength = ShortSyllable, vowel = "ω," }
+                        ]
+        , test "οὐλομένην, ἣ μυρί᾽ Ἀχαιοῖς ἄλγε᾽ ἔθηκε," <|
+            \_ ->
+                stringToSyllableSounds "οὐλομένην, ἣ μυρί᾽ Ἀχαιοῖς ἄλγε᾽ ἔθηκε,"
+                    |> Expect.equal
+                        [ { consonant = "", syllableLength = LongSyllable, vowel = "οὐ" }
+                        , { consonant = "λ", syllableLength = ShortSyllable, vowel = "ο" }
+                        , { consonant = "μ", syllableLength = ShortSyllable, vowel = "έ" }
+                        , { consonant = "ν", syllableLength = LongSyllable, vowel = "η" }
+                        , { consonant = "ν", syllableLength = NoSyllable, vowel = "," }
+                        , { consonant = " ", syllableLength = LongSyllable, vowel = "ἣ" }
+                        , { consonant = " μ", syllableLength = ShortSyllable, vowel = "υ" }
+                        , { consonant = "ρ", syllableLength = ShortSyllable, vowel = "ί" }
+                        , { consonant = "", syllableLength = NoSyllable, vowel = "᾽" }
+                        , { consonant = " ", syllableLength = ShortSyllable, vowel = "Ἀ" }
+                        , { consonant = "χ", syllableLength = LongSyllable, vowel = "αι" }
+                        , { consonant = "", syllableLength = LongSyllable, vowel = "οῖ" }
+                        , { consonant = "ς", syllableLength = LongSyllable, vowel = " ἄ" }
+                        , { consonant = "λ", syllableLength = NoSyllable, vowel = "" }
+                        , { consonant = "γ", syllableLength = ShortSyllable, vowel = "ε" }
+                        , { consonant = "", syllableLength = NoSyllable, vowel = "᾽" }
+                        , { consonant = " ", syllableLength = ShortSyllable, vowel = "ἔ" }
+                        , { consonant = "θ", syllableLength = LongSyllable, vowel = "η" }
+                        , { consonant = "κ", syllableLength = ShortSyllable, vowel = "ε," }
+                        ]
+        ]
 
+
+test_accentFinder : Test
+test_accentFinder =
+    describe "test_accentFinder"
+        [ test "grave" <| \_ -> accentFinder "ῢ" |> Expect.equal Grave
+        , test "acute" <| \_ -> accentFinder "ά" |> Expect.equal Acute
+        , test "circumflex" <| \_ -> accentFinder "ῆ" |> Expect.equal Circumflex
+        , test "no accent" <| \_ -> accentFinder "α" |> Expect.equal NoAccent
+        , test " ἄ" <| \_ -> accentFinder " " |> Expect.equal NoAccent
+        ]
+
+
+test_accentMapper : Test
+test_accentMapper =
+    describe "test_accentMapper"
+        [ test "ει" <| \_ -> accentReturn { consonant = "c", vowel = "ει", syllableLength = LongSyllable } |> Expect.equal NoAccent
+        , test "ὰ" <| \_ -> accentReturn { consonant = "c", vowel = "ὰ", syllableLength = ShortSyllable } |> Expect.equal Grave
+        , test "ἄ" <| \_ -> accentReturn { consonant = "ν", vowel = " ἄ", syllableLength = ShortSyllable } |> Expect.equal Acute
+        , test "ύ" <| \_ -> accentReturn { consonant = "c", vowel = "ύ", syllableLength = ShortSyllable } |> Expect.equal Acute
+        , test "οῦ" <| \_ -> accentReturn { consonant = "c", vowel = "οῦ", syllableLength = LongSyllable } |> Expect.equal Circumflex
+        , test "oύ" <| \_ -> accentReturn { consonant = "c", vowel = "oύ", syllableLength = LongSyllable } |> Expect.equal Acute
+        , test "οὺ" <| \_ -> accentReturn { consonant = "c", vowel = "οὺ", syllableLength = LongSyllable } |> Expect.equal Grave
+        ]
+
+
+test_mapAccentMapper : Test
+test_mapAccentMapper =
+    describe "testing List.map + accent_mapper"
+        [ test "multiple syllables" <|
+            \_ ->
+                List.map accentReturn
+                    [ { consonant = "c", vowel = "ει", syllableLength = LongSyllable } ]
+                    |> Expect.equal [ NoAccent ]
+        ]
+
+
+test_makeStaveNote : Test
+test_makeStaveNote =
+    describe "testing makeStaveNote"
+        [ test "test simple" <|
+            \_ ->
+                makeStaveNote
+                    { consonant = "c", vowel = "ει", syllableLength = LongSyllable }
+                    |> Expect.equal [ StaveNote C4 Half "cει" NoAccent ]
+        , test "andra" <|
+            \_ ->
+                List.concatMap makeStaveNote
+                    [ { consonant = "", syllableLength = LongSyllable, vowel = "ἄ" }
+                    , { consonant = "ν", syllableLength = NoSyllable, vowel = "" }
+                    , { consonant = "δρ", syllableLength = ShortSyllable, vowel = "α" }
+                    ]
+                    |> Expect.equal [ StaveNote G4 Half "ἄ" Acute, StaveNote NoNote NoDuration "ν" NoAccent, StaveNote C4 Quarter "δρα" NoAccent ]
+        ]
+
+
+test_parseString : Test
+test_parseString =
+    describe "test parseString"
+        [ test "ἄνδρα μοι ἔννεπε, μοῦσα, πολύτροπον, ὃς μάλα πολλὰ" <|
+            \_ ->
+                parseString_ "ἄνδρα μοι ἔννεπε, μοῦσα, πολύτροπον, ὃς μάλα πολλὰ"
+                    |> Expect.equal
+                        [ { accent = Acute, annotation = "ἄ", duration = Half, key = G4 }
+                        , { accent = NoAccent, annotation = "ν", duration = NoDuration, key = NoNote }
+                        , { accent = NoAccent, annotation = "δρα", duration = Quarter, key = C4 }
+                        , { accent = NoAccent, annotation = " μοι", duration = Half, key = C4 }
+                        , { accent = Acute, annotation = " ἔ", duration = Half, key = G4 }
+                        , { accent = NoAccent, annotation = "ν", duration = NoDuration, key = NoNote }
+                        , { accent = NoAccent, annotation = "νε", duration = Quarter, key = C4 }
+                        , { accent = NoAccent, annotation = "πε,", duration = Quarter, key = C4 }
+                        , { accent = Circumflex, annotation = " μοῦ", duration = Eighth, key = E4 }
+                        , { accent = Circumflex, annotation = "", duration = Quarter, key = G4 }
+                        , { accent = Circumflex, annotation = "", duration = Eighth, key = E4 }
+                        , { accent = NoAccent, annotation = "σα,", duration = Quarter, key = C4 }
+                        , { accent = NoAccent, annotation = " πο", duration = Quarter, key = C4 }
+                        , { accent = Acute, annotation = "λύ", duration = Half, key = G4 }
+                        , { accent = NoAccent, annotation = "τρο", duration = Quarter, key = C4 }
+                        , { accent = NoAccent, annotation = "πο", duration = Quarter, key = C4 }
+                        , { accent = NoAccent, annotation = "ν,", duration = NoDuration, key = NoNote }
+                        , { accent = Grave, annotation = " ὃ", duration = Half, key = E4 }
+                        , { accent = NoAccent, annotation = "ς ", duration = NoDuration, key = NoNote }
+                        , { accent = Acute, annotation = "μά", duration = Quarter, key = G4 }
+                        , { accent = NoAccent, annotation = "λα", duration = Quarter, key = C4 }
+                        , { accent = NoAccent, annotation = " πο", duration = Half, key = C4 }
+                        , { accent = NoAccent, annotation = "λ", duration = NoDuration, key = NoNote }
+                        , { accent = Grave, annotation = "λὰ", duration = Quarter, key = E4 }
+                        ]
+        , test "μῆνιν ἄειδε θεὰ Πηληϊάδεω Ἀχιλῆος" <|
+            \_ ->
+                parseString_ "μῆνιν ἄειδε θεὰ Πηληϊάδεω Ἀχιλῆος"
+                    |> Expect.equal
+                        [ { accent = Circumflex, annotation = "μῆ", duration = Eighth, key = E4 }
+                        , { accent = Circumflex, annotation = "", duration = Quarter, key = G4 }
+                        , { accent = Circumflex, annotation = "", duration = Eighth, key = E4 }
+                        , { accent = NoAccent, annotation = "νι", duration = Quarter, key = C4 }
+                        , { accent = Acute, annotation = "ν ἄ", duration = Quarter, key = G4 }
+                        , { accent = NoAccent, annotation = "ει", duration = Half, key = C4 }
+                        , { accent = NoAccent, annotation = "δε", duration = Quarter, key = C4 }
+                        , { accent = NoAccent, annotation = " θε", duration = Quarter, key = C4 }
+                        , { accent = Grave, annotation = "ὰ", duration = Quarter, key = E4 }
+                        , { accent = NoAccent, annotation = " Πη", duration = Half, key = C4 }
+                        , { accent = NoAccent, annotation = "λη", duration = Half, key = C4 }
+                        , { accent = NoAccent, annotation = "ϊ", duration = Quarter, key = C4 }
+                        , { accent = Acute, annotation = "ά", duration = Quarter, key = G4 }
+                        , { accent = NoAccent, annotation = "δε", duration = Quarter, key = C4 }
+                        , { accent = NoAccent, annotation = "ω", duration = Half, key = C4 }
+                        , { accent = NoAccent, annotation = " Ἀ", duration = Quarter, key = C4 }
+                        , { accent = NoAccent, annotation = "χι", duration = Quarter, key = C4 }
+                        , { accent = Circumflex, annotation = "λῆ", duration = Eighth, key = E4 }
+                        , { accent = Circumflex, annotation = "", duration = Quarter, key = G4 }
+                        , { accent = Circumflex, annotation = "", duration = Eighth, key = E4 }
+                        , { accent = NoAccent, annotation = "ο", duration = Quarter, key = C4 }
+                        , { accent = NoAccent, annotation = "ς", duration = NoDuration, key = NoNote }
+                        ]
+        , test "οὐλομένην, ἣ μυρί᾽ Ἀχαιοῖς ἄλγε᾽ ἔθηκε," <|
+            \_ ->
+                parseString_ "οὐλομένην, ἣ μυρί᾽ Ἀχαιοῖς ἄλγε᾽ ἔθηκε,"
+                    |> Expect.equal
+                        [ { accent = NoAccent, annotation = "οὐ", duration = Half, key = C4 }
+                        , { accent = NoAccent, annotation = "λο", duration = Quarter, key = C4 }
+                        , { accent = Acute, annotation = "μέ", duration = Quarter, key = G4 }
+                        , { accent = NoAccent, annotation = "νη", duration = Half, key = C4 }
+                        , { accent = NoAccent, annotation = "ν,", duration = NoDuration, key = NoNote }
+                        , { accent = Grave, annotation = " ἣ", duration = Half, key = E4 }
+                        , { accent = NoAccent, annotation = " μυ", duration = Quarter, key = C4 }
+                        , { accent = Acute, annotation = "ρί", duration = Quarter, key = G4 }
+                        , { accent = NoAccent, annotation = "᾽", duration = NoDuration, key = NoNote }
+                        , { accent = NoAccent, annotation = " Ἀ", duration = Quarter, key = C4 }
+                        , { accent = NoAccent, annotation = "χαι", duration = Half, key = C4 }
+                        , { accent = Circumflex, annotation = "οῖ", duration = Eighth, key = E4 }
+                        , { accent = Circumflex, annotation = "", duration = Quarter, key = G4 }
+                        , { accent = Circumflex, annotation = "", duration = Eighth, key = E4 }
+                        , { accent = Acute, annotation = "ς ἄ", duration = Half, key = G4 }
+                        , { accent = NoAccent, annotation = "λ", duration = NoDuration, key = NoNote }
+                        , { accent = NoAccent, annotation = "γε", duration = Quarter, key = C4 }
+                        , { accent = NoAccent, annotation = "᾽", duration = NoDuration, key = NoNote }
+                        , { accent = Acute, annotation = " ἔ", duration = Quarter, key = G4 }
+                        , { accent = NoAccent, annotation = "θη", duration = Half, key = C4 }
+                        , { accent = NoAccent, annotation = "κε,", duration = Quarter, key = C4 }
+                        ]
         ]
