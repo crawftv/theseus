@@ -1,1 +1,1 @@
-web: server-exe   # $ cat *.cabal | grep executable
+web: server-exe   # $ cat server/*.cabal | grep executable
