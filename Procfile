@@ -1,1 +1,1 @@
-web: ./dist/build/server/server-exe
+web: server-exe   # $ cat *.cabal | grep executable
