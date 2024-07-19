@@ -1,0 +1,42 @@
+# Use Debian as the base image
+FROM 637423200832.dkr.ecr.us-east-1.amazonaws.com/crawfordc:crawford-base AS package_install
+
+# Install GHC and Cabal
+RUN apt-get update && apt-get install -y \
+    ghc \
+    cabal-install \
+    pkg-config \
+    zlib1g-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+FROM package_install AS haskell_build
+# Set the working directory in the container
+WORKDIR /app
+
+# Copy the application files to the working directory
+COPY db.sqlite3                 /app/db.sqlite3
+COPY server/app/Main.hs         /app/server/app/Main.hs
+COPY server/src/Lib.hs          /app/server/src/Lib.hs
+COPY server/package.yaml        /app/server/package.yaml
+COPY server/server.cabal        /app/server/server.cabal
+COPY server/Setup.hs            /app/server/Setup.hs
+COPY server/stack.yaml          /app/server/stack.yaml
+COPY server/stack.yaml.lock     /app/server/stack.yaml.lock
+COPY cloudflared/              /app/cloudflared
+
+
+# Set the working directory to where the .cabal file is located
+WORKDIR /app/server
+
+# Build the Haskell application
+RUN cabal update
+RUN cabal build
+
+WORKDIR /app
+
+FROM haskell_build AS runtime_base
+
+# Copy supervisord configuration
+COPY supervisord.api.conf /etc/supervisor/conf.d/supervisord.conf
+
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
