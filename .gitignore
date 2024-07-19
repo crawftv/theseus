@@ -21,4 +21,4 @@ diorisis/
 /server/dist-newstyle/
 /canonical-greekLit/
 /.zig-cache/
-/.cloudflared/
+/cloudflared/
