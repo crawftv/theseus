@@ -132,12 +132,12 @@ server dbfile = listAllBooks
 
 
 runApp :: FilePath -> IO ()
-runApp dbfile = run 8080  (simpleCors $ (serve api $ server dbfile))
+runApp dbfile = run 3000  (simpleCors $ (serve api $ server dbfile))
 
 
 main :: IO ()
 main = do
   -- you could read this from some configuration file,
   -- environment variable or somewhere else instead.
-  let dbfile = "db.sqlite3"
+  let dbfile = "../db.sqlite3"
   runApp dbfile

@@ -36,7 +36,8 @@ class DiorisisText:
                         analysis_morph = analysis.get("morph")
 
 
+if __name__ == "__main__":
+    x = DiorisisText(xml_path="diorisis/Euripides (0006) - Heracles (009).xml")
+    for i in x.lines:
+        print(i)
 
-x = DiorisisText(xml_path="diorisis/Euripides (0006) - Heracles (009).xml")
-for i in x.lines:
-    print(i)
