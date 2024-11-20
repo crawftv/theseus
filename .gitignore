@@ -2,7 +2,7 @@ tlg/
 .venv
 elm-stuff
 db.sqlite3
-public/elm.js
+static/elm.js
 elm-stuff
 .idea/
 .ipynb_checkpoints
@@ -11,7 +11,7 @@ server/.stack-work
 .stack-work/
 __pycache__/
 fulltexts/
-public/index.html
+static/index.html
 node_modules
 lsj_perseus.cex
 .DS_Store
@@ -22,3 +22,5 @@ diorisis/
 /canonical-greekLit/
 /.zig-cache/
 /cloudflared/
+/text-rec/data/
+/canonical-greekLit/
