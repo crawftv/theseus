@@ -2,7 +2,6 @@ tlg/
 .venv
 elm-stuff
 db.sqlite3
-static/elm.js
 elm-stuff
 .idea/
 .ipynb_checkpoints
@@ -11,7 +10,6 @@ server/.stack-work
 .stack-work/
 __pycache__/
 fulltexts/
-static/index.html
 node_modules
 lsj_perseus.cex
 .DS_Store
